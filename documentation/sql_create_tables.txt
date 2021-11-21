@@ -1,0 +1,13 @@
+CREATE TABLE users (USER_ID int(10) PRIMARY KEY AUTO_INCREMENT, EMAIL varchar (50), VERIFIED int(2), LEVEL int(2), PASSWORD varchar(255));
+
+CREATE TABLE verification (CODE_ID int(10) PRIMARY KEY AUTO_INCREMENT, CODE varchar (50), EMAIL varchar(50));
+
+CREATE TABLE wahlen (WAHL_ID int(10) PRIMARY KEY AUTO_INCREMENT, TITLE varchar (50), ITEMS varchar(1000), ACTIVE int(2));
+
+CREATE TABLE stimmen_weitergaben (WEITERGABE_ID int(10) PRIMARY KEY AUTO_INCREMENT, VON varchar (50), ZU varchar(50));
+
+CREATE TABLE users_voted (USVOTE_ID int(10) PRIMARY KEY AUTO_INCREMENT, VON varchar (50), WAHL_ID varchar(50));
+
+CREATE TABLE voting_results (RESULT_ID int(10) PRIMARY KEY AUTO_INCREMENT, WAHL_ID int(10),ITEM varchar (50), VOTES varchar(50));
+
+CREATE TABLE voting_results_total (RESULTTOTAL_ID int(10) PRIMARY KEY AUTO_INCREMENT, WAHL_ID int(10),ITEM varchar (50), VOTES_TOTAL varchar(50));
