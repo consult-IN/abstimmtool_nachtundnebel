@@ -25,11 +25,11 @@ if (!isset($_SESSION["email"])) {
 
 require("php/sec/mysql.php");
 
-    if (isset($_POST["add"])){
+if (isset($_POST["add"])) {
 
-        if($_POST["email"] == $_SESSION["email"]){
-            print("<script>alert('Du Wicht! Stimme an dich selber weitergeben? Das geht nicht!')</script>");
-        }else{
+    if ($_POST["email"] == $_SESSION["email"]) {
+        print("<script>alert('Du Wicht! Stimme an dich selber weitergeben? Das geht nicht!')</script>");
+    } else {
 
         $stmt = $mysql->prepare("INSERT INTO stimmen_weitergaben (VON, ZU) VALUES (:von, :zu)");
 
@@ -39,12 +39,17 @@ require("php/sec/mysql.php");
 
         //Personen über Stimmenrückführung informieren!
 
-        $stmt = $mysql->prepare("DELETE FROM `stimmen_weitergaben` WHERE `stimmen_weitergaben`.`zu` = " . $_SESSION["email"]);
-
-        header("Location: stimme_weitergeben.php");
+        $stmt = $mysql->prepare("SELECT * FROM stimmen_weitergaben WHERE stimmen_weitergaben.zu = '" . $_SESSION["email"] . "'");
+        $stmt->execute();
+        $count = $stmt->rowCount();
+        if ($count >= 1) {
+            $stmt = $mysql->prepare("DELETE FROM stimmen_weitergaben WHERE stimmen_weitergaben.zu = '" . $_SESSION["email"] . "'");
+            $stmt->execute();
         }
 
+        header("Location: stimme_weitergeben.php");
     }
+}
 
 ?>
 
@@ -55,17 +60,17 @@ require("php/sec/mysql.php");
         <div id="top-image"><img class="img-fluid mx-auto d-block" src="res/Logo consult.IN_Transparent.png" style="max-width: 40%; margin-top: 5px;"></div>
         <div id="button-handler" style="text-align: center; margin-top: 25px; margin-bottom: 10px;">
 
-        <?php
+            <?php
 
             require("php/sec/mysql.php");
 
-            $stmt = $mysql->prepare("SELECT * FROM stimmen_weitergaben WHERE VON = :email"); 
+            $stmt = $mysql->prepare("SELECT * FROM stimmen_weitergaben WHERE VON = :email");
             $stmt->bindParam(":email", $_SESSION["email"]);
             $stmt->execute();
             $count = $stmt->rowCount();
             if ($count == 1) {
-                echo '<a href="rm_stimmenweitergabe.php" class="btn btn-danger btn-lg active" role="button" aria-pressed="true">Du hast bereits abgestimmt! Klicke hier, um deine Stimme zurückzufordern.</a>';    
-            } else{
+                echo '<a href="rm_stimmenweitergabe.php" class="btn btn-danger btn-lg active" role="button" aria-pressed="true">Du hast bereits abgestimmt! Klicke hier, um deine Stimme zurückzufordern.</a>';
+            } else {
                 echo '
                 <div style="width: 18rem; text-align: left;" class="mx-auto">
                 <form action="stimme_weitergeben.php" method="post">
@@ -80,7 +85,7 @@ require("php/sec/mysql.php");
                 ';
             }
 
-        ?>
+            ?>
 
         </div>
 

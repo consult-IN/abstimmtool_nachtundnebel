@@ -40,6 +40,7 @@ if (isset($_POST["login"])) {
     } else {
         //sendEmail($email);
         //email has been send to verfy account, please check your email 
+        print("<script>alert('Bitte überprüfe deine Emails und bestätige über den enthaltenen Link.')</script>");
         $stmt = $mysql->prepare("INSERT INTO users (EMAIL, VERIFIED, LEVEL, PASSWORD) VALUES (:email, :verified, :level, :pw)");
 
         $stmt->bindParam(":email", $_POST["email"]);
