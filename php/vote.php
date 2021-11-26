@@ -26,6 +26,21 @@ function vote($selected, $email, $wahl_id){
             $count = $stmt->rowCount();
             $stimmen = $count + 1;
 
+            $stmt = $mysql->prepare("SELECT * FROM stimmen_weitergaben WHERE VON = :email"); //verified überprüfen
+            $stmt->bindParam(":email", $email);
+            $stmt->execute();
+            $stmt->execute();
+            $count = $stmt->rowCount();
+            if ($count == 1) {
+                $stimmen = 0;
+                print("<script>alert('Achtung! Du hast deine Stimme an eine andere Person weitergegeben! Deine Stimme zählt nicht.')</script>");
+            } else{
+                $stmt = $mysql->prepare("INSERT INTO users_voted (VON, WAHL_ID) VALUES (:email, :wahl_id)");
+                $stmt->bindParam(":email", $email);
+                $stmt->bindParam(":wahl_id", $wahl_id);
+                $stmt->execute();
+            }
+
             $stmt = $mysql->prepare("INSERT INTO voting_results (WAHL_ID, ITEM, VOTES) VALUES (:wahl_id, :selected, :stimmen)"); 
             $stmt->bindParam(":selected", $selected);
             $stmt->bindParam(":wahl_id", $wahl_id);
@@ -39,5 +54,3 @@ function vote($selected, $email, $wahl_id){
     
     return $result;
 }
-
-?>
