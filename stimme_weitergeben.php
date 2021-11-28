@@ -69,7 +69,7 @@ if (isset($_POST["add"])) {
             $stmt->execute();
             $count = $stmt->rowCount();
             if ($count == 1) {
-                echo '<a href="rm_stimmenweitergabe.php" class="btn btn-danger btn-lg active" role="button" aria-pressed="true">Du hast bereits abgestimmt! Klicke hier, um deine Stimme zurückzufordern.</a>';
+                echo '<a href="rm_stimmenweitergabe.php" class="btn btn-danger btn-lg active" role="button" aria-pressed="true">Du hast deine Stimme bereits weitergegeben! <br> Klicke hier, um deine Stimme zurückzufordern.</a>';
             } else {
                 echo '
                 <div style="width: 18rem; text-align: left;" class="mx-auto">
