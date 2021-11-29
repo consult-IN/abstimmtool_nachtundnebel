@@ -1,5 +1,13 @@
 <?php
 session_start();
+require("php/sec/mysql.php");
+$stmt = $mysql->prepare("SELECT * FROM wahlen WHERE ACTIVE = 1"); //verified überprüfen
+$stmt->execute();
+$count = $stmt->rowCount();
+if ($count == 1) {
+    header("Location: voting.php");
+    exit;
+}
 if (!isset($_SESSION["email"])) {
     header("Location: index.php");
     exit;
