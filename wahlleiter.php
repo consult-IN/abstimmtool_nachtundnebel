@@ -28,51 +28,52 @@ if (!isset($_SESSION["email"]) && $_SESSION["level"] >= 1) {
         <div id="top-image"><img class="img-fluid mx-auto d-block" src="res/Logo consult.IN_Transparent.png" style="max-width: 40%; margin-top: 5px;"></div>
         <div id="button-handler" style="text-align: center; margin-top: 25px; margin-bottom: 10px;">
 
-        <a href="wahl_add.php" class="btn btn-secondary btn-lg" tabindex="-1" role="button" aria-disabled="true">Wahl hinzufügen</a>
-        <a href="wahl_view_res_selected.php" class="btn btn-secondary btn-lg" tabindex="-1" role="button" aria-disabled="true">Wahlergebnisse ansehen</a>
+            <a href="wahl_add.php" class="btn btn-secondary btn-lg" tabindex="-1" role="button" aria-disabled="true">Wahl hinzufügen</a>
+            <a href="wahl_view_res_selected.php" class="btn btn-secondary btn-lg" tabindex="-1" role="button" aria-disabled="true">Wahlergebnisse ansehen</a>
+            <a href="wahl_partic_selected.php" class="btn btn-secondary btn-lg" tabindex="-1" role="button" aria-disabled="true">Wahlteilnehmer ansehen</a>
 
         </div>
 
         <?php
-                require("php/sec/mysql.php");
+        require("php/sec/mysql.php");
 
-                $db_erg_entry = mysqli_query($db_link, 'SELECT * FROM wahlen ');
+        $db_erg_entry = mysqli_query($db_link, 'SELECT * FROM wahlen ');
 
-                if (!$db_erg_entry) {
-                    die('Ungültige Abfrage: ' . mysqli_error());
-                }
+        if (!$db_erg_entry) {
+            die('Ungültige Abfrage: ' . mysqli_error());
+        }
 
-                echo '<table border="1" class="table">';
-                echo "<tr>";
-                echo "<td>" . "ID" . "</td>";
-                echo "<td>" . "Titel" . "</td>";
-                echo "<td>" . "Elemente" . "</td>";
-                echo "<td></td>";
-                echo "</tr>";
+        echo '<table border="1" class="table">';
+        echo "<tr>";
+        echo "<td>" . "ID" . "</td>";
+        echo "<td>" . "Titel" . "</td>";
+        echo "<td>" . "Elemente" . "</td>";
+        echo "<td></td>";
+        echo "</tr>";
 
-                while ($zeile = mysqli_fetch_array($db_erg_entry, MYSQLI_ASSOC)) {
+        while ($zeile = mysqli_fetch_array($db_erg_entry, MYSQLI_ASSOC)) {
 
-                    echo "<tr>";
-                    echo "<td>" . $zeile['WAHL_ID'] . "</td>";
-                    echo "<td>" . $zeile['TITLE'] . "</td>";
-                    echo "<td>" . $zeile['ITEMS'] . "</td>";
+            echo "<tr>";
+            echo "<td>" . $zeile['WAHL_ID'] . "</td>";
+            echo "<td>" . $zeile['TITLE'] . "</td>";
+            echo "<td>" . $zeile['ITEMS'] . "</td>";
 
-                        if($zeile['ACTIVE'] == 0){
-                            echo '<td><a href="activatevote.php?wahlid=' . $zeile["WAHL_ID"] . '" class="btn btn-outline-success active" role="button" aria-pressed="true">Aktivieren</a></td>"';
-                        } else{
-                            echo '<td><a href="stopvote.php?wahlid=' . $zeile["WAHL_ID"] . '" class="btn btn-outline-danger active" role="button" aria-pressed="true">Wahl schließen</a></td>"';
-                        }
+            if ($zeile['ACTIVE'] == 0) {
+                echo '<td><a href="activatevote.php?wahlid=' . $zeile["WAHL_ID"] . '" class="btn btn-outline-success active" role="button" aria-pressed="true">Aktivieren</a></td>"';
+            } else {
+                echo '<td><a href="stopvote.php?wahlid=' . $zeile["WAHL_ID"] . '" class="btn btn-outline-danger active" role="button" aria-pressed="true">Wahl schließen</a></td>"';
+            }
 
-                    echo "</tr>";
-                }
-                echo "</table>";
-
-
+            echo "</tr>";
+        }
+        echo "</table>";
 
 
-            ?>
 
-            <a href="voting.php" class="btn btn-secondary btn-lg" tabindex="-1" role="button" aria-disabled="true">Zurück</a>
+
+        ?>
+
+        <a href="voting.php" class="btn btn-secondary btn-lg" tabindex="-1" role="button" aria-disabled="true">Zurück</a>
 
     </div>
 

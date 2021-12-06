@@ -21,45 +21,34 @@ if (!isset($_SESSION["email"]) && $_SESSION["level"] >= 1) {
     <title>Abstimmtool consult.IN</title>
 </head>
 
+<?php
+
+require("php/sec/mysql.php");
+
+if (isset($_POST["view"])) {
+    header("Location: wahl_view_partic.php?id=" . $_POST["id"]);
+}
+
+?>
+
 <body>
 
-    <div class="main-content mx-auto">
+    <div>
 
-        <?php
-
-        require("php/sec/mysql.php");
-
-        $id = $_GET['id'];
-
-        $db_erg_entry = mysqli_query($db_link, 'SELECT * FROM voting_results_total WHERE WAHL_ID = ' . $id . ' ORDER BY VOTES_TOTAL DESC;');
-
-        if (!$db_erg_entry) {
-            die('Ungültige Abfrage: ' . mysqli_error());
-        }
-
-        echo '<table border="1" class="table" style="margin-top: 15px;">';
-        echo "<tr>";
-        echo "<td>" . "" . "</td>";
-        echo "<td>" . "Name" . "</td>";
-        echo "<td>" . "Stimmen" . "</td>";
-        echo "</tr>";
-
-        $i = 1;
-
-        while ($zeile = mysqli_fetch_array($db_erg_entry, MYSQLI_ASSOC)) {
-
-            echo "<tr>";
-            echo "<td>" . $i . ".</td>";
-            echo "<td>" . $zeile['ITEM'] . "</td>";
-            echo "<td>" . $zeile['VOTES_TOTAL'] . "</td>";
-            echo "</tr>";
-            $i++;
-        }
-
-        echo "</table>";
-
-
-        ?>
+        <div class="card mx-auto vert_center" style="width: 18rem; vertical-align: middle;">
+            <img class="card-img-top" src="res/Logo consult.IN_Transparent.png" alt="Card image cap" style="padding: 10px 10px 10px 10px;">
+            <div class="card-body">
+                <form action="wahl_partic_selected.php" method="post">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Email eingeben: ("all" für alle Einträge)</label>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="exampleInputEmail1" name="id" aria-describedby="emailHelp" placeholder="">
+                            </select>
+                        </div>
+                        <button type="submit" name="view" class="btn btn-primary">Ansehen</button>
+                </form>
+            </div>
+        </div>
 
         <a href="wahlleiter.php" class="btn btn-secondary btn-lg" tabindex="-1" role="button" aria-disabled="true">Zurück</a>
 

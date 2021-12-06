@@ -31,7 +31,13 @@ if (!isset($_SESSION["email"]) && $_SESSION["level"] >= 1) {
 
         $id = $_GET['id'];
 
-        $db_erg_entry = mysqli_query($db_link, 'SELECT * FROM voting_results_total WHERE WAHL_ID = ' . $id . ' ORDER BY VOTES_TOTAL DESC;');
+        if ($id == "all") {
+
+            $db_erg_entry = mysqli_query($db_link, 'SELECT * FROM `users_voted` ORDER BY WAHL_ID');
+        } else {
+
+            $db_erg_entry = mysqli_query($db_link, 'SELECT * FROM users_voted WHERE VON LIKE "' . $id . '" ORDER BY WAHL_ID;');
+        }
 
         if (!$db_erg_entry) {
             die('Ungültige Abfrage: ' . mysqli_error());
@@ -40,20 +46,17 @@ if (!isset($_SESSION["email"]) && $_SESSION["level"] >= 1) {
         echo '<table border="1" class="table" style="margin-top: 15px;">';
         echo "<tr>";
         echo "<td>" . "" . "</td>";
-        echo "<td>" . "Name" . "</td>";
-        echo "<td>" . "Stimmen" . "</td>";
+        echo "<td>" . "Email" . "</td>";
+        echo "<td>" . "Wahl ID" . "</td>";
         echo "</tr>";
-
-        $i = 1;
 
         while ($zeile = mysqli_fetch_array($db_erg_entry, MYSQLI_ASSOC)) {
 
             echo "<tr>";
-            echo "<td>" . $i . ".</td>";
-            echo "<td>" . $zeile['ITEM'] . "</td>";
-            echo "<td>" . $zeile['VOTES_TOTAL'] . "</td>";
+            echo "<td>" . $zeile['USVOTE_ID'] . ".</td>";
+            echo "<td>" . $zeile['VON'] . "</td>";
+            echo "<td>" . $zeile['WAHL_ID'] . "</td>";
             echo "</tr>";
-            $i++;
         }
 
         echo "</table>";
