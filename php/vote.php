@@ -14,12 +14,6 @@ function vote($selected, $email, $wahl_id){
             $result = 1;
         }else{
 
-            $stmt = $mysql->prepare("INSERT INTO users_voted (VON, WAHL_ID) VALUES (:email, :wahl_id)"); 
-            $stmt->bindParam(":email", $email);
-            $stmt->bindParam(":wahl_id", $wahl_id);
-            $stmt->execute();  
-            
-
             $stmt = $mysql->prepare("SELECT * FROM stimmen_weitergaben WHERE ZU = :email"); 
             $stmt->bindParam(":email", $email);
             $stmt->execute();

@@ -3,7 +3,7 @@
 $host = "localhost";
 $name = "abstimmtool";
 $user = "root";
-$passwort = "123";
+$passwort = "";
 
 try {
     $mysql = new PDO("mysql:host=$host;dbname=$name", $user, $passwort);

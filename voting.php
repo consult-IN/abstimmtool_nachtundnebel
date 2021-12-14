@@ -38,12 +38,14 @@ require("php/vote.php");
             $row = $stmt->fetch();
             $wahlid = $row["WAHL_ID"];
 
-        $result = vote($_POST["selected"], $_SESSION["email"], $wahlid);
+            //TODO: Array füllen
 
-        if($result == 0){
-            echo "<script>alert('Stimme erfolgreich abgegeben!')</script>";
+            $result = vote($_POST["selected"], $_SESSION["email"], $wahlid);
+
+            if($result == 0){
+                echo "<script>alert('Stimme erfolgreich abgegeben!')</script>";
+            }
         }
-    }
 
     }
 
@@ -70,7 +72,8 @@ require("php/vote.php");
         $stmt->execute();
         $count = $stmt->rowCount();
         echo '<p>Du hast ' . $count . ' zusätzliche Stimmen</p>';
-        
+
+        $stimmen = $count;
 
         $stmt = $mysql->prepare("SELECT * FROM wahlen WHERE ACTIVE = :active_nr"); 
         $active_nr = 1;
@@ -88,19 +91,21 @@ require("php/vote.php");
             <div class="card-body">
             <h5 class="card-title"> ' . $row["TITLE"] . '</h5>
             <form action="voting.php" method="post">
-            <div class="form-group">
-            <label for="exampleFormControlSelect1">Auswahl:</label>
-            <select class="form-control" name="selected" id="exampleFormControlSelect1">';
+            <div class="form-group">';
 
                 for ($i = 0; $i < count($elements); $i++) {
                 echo '
-                <option value="' . $elements[$i] . '">' . $elements[$i] . '</option>';
-                }
+                <label for="basic-url" class="form-label">Auswahl ' . ($i+1) . ':</label>
+                <div class="input-group mb-3">
+                    <div class="hstack gap-3 mx-auto">
+                    <div class="bg-light border mx-auto"><span class="input-group-text" id="basic-addon3">' . $elements[$i] . '</span></div>
+                    <div class="bg-light border ms-auto mx-auto"><input type="number" class="form-control" id="X" name="X" aria-describedby="basic-addon3" min="0"></div> 
+                    </div>
+                </div>';
+                };
 
-
-            echo '</select>
+            echo '
             </div>
-
 
             <button type="submit" name="vote" class="btn btn-primary">Abstimmen</button>
             </form>
@@ -123,6 +128,7 @@ require("php/vote.php");
     </div>
 
     <!-- Optional JavaScript; choose one of the two! -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
     </script>
     <!-- Option 2: Separate Popper and Bootstrap JS 
