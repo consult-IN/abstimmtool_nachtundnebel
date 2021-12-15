@@ -38,12 +38,34 @@ require("php/vote.php");
             $row = $stmt->fetch();
             $wahlid = $row["WAHL_ID"];
 
-            //TODO: Array füllen
+            $stmt = $mysql->prepare("SELECT * FROM wahlen WHERE ACTIVE = :active_nr"); 
+            $active_nr = 1;
+            $stmt->bindParam(":active_nr", $active_nr);
+            $stmt->execute();
+            $count = $stmt->rowCount();
+            if ($count == 1) {
 
-            $result = vote($_POST["selected"], $_SESSION["email"], $wahlid);
+                $row = $stmt->fetch();
+                $elements = explode(',', $row["ITEMS"]);
+                $elem_amount = count($elements);
 
-            if($result == 0){
-                echo "<script>alert('Stimme erfolgreich abgegeben!')</script>";
+                $selected = array();
+
+                $n = 0;
+
+                for($k = 0; $k < $elem_amount*2; $k = $k + 2){
+                    
+                    $selected[$k] = $elements[$n];
+                    $selected[($k+1)] = $_POST[$n];
+                    $n++;
+
+                }
+                
+                $result = vote($selected, $_SESSION["email"], $wahlid);
+
+                if($result == 0){
+                    echo "<script>alert('Stimme erfolgreich abgegeben!')</script>";
+                }
             }
         }
 
@@ -99,7 +121,7 @@ require("php/vote.php");
                 <div class="input-group mb-3">
                     <div class="hstack gap-3 mx-auto">
                     <div class="bg-light border mx-auto"><span class="input-group-text" id="basic-addon3">' . $elements[$i] . '</span></div>
-                    <div class="bg-light border ms-auto mx-auto"><input type="number" class="form-control" id="X" name="X" aria-describedby="basic-addon3" min="0"></div> 
+                    <div class="bg-light border ms-auto mx-auto"><input type="number" class="form-control" id="' . $i . '" name="' . $i . '" aria-describedby="basic-addon3" min="0"></div> 
                     </div>
                 </div>';
                 };
