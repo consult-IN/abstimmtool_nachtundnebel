@@ -56,7 +56,11 @@ require("php/vote.php");
                 for($k = 0; $k < $elem_amount*2; $k = $k + 2){
                     
                     $selected[$k] = $elements[$n];
-                    $selected[($k+1)] = $_POST[$n];
+                    if($_POST[$n] != NULL){
+                        $selected[($k+1)] = $_POST[$n];
+                    }else{
+                        $selected[($k+1)] = 0;
+                    }
                     $n++;
 
                 }

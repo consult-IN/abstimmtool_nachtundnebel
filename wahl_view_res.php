@@ -47,7 +47,10 @@ if (!isset($_SESSION["email"]) && $_SESSION["level"] >= 1) {
         $i = 1;
 
         while ($zeile = mysqli_fetch_array($db_erg_entry, MYSQLI_ASSOC)) {
-
+            if($zeile['ITEM'] == "Enthaltungen"){
+                $enthaltungen = $zeile['VOTES_TOTAL'];
+                continue;
+            }
             echo "<tr>";
             echo "<td>" . $i . ".</td>";
             echo "<td>" . $zeile['ITEM'] . "</td>";
@@ -56,7 +59,7 @@ if (!isset($_SESSION["email"]) && $_SESSION["level"] >= 1) {
             $i++;
         }
 
-        echo "</table>";
+        echo "</table><br><h4>Enthaltungen: " . $enthaltungen . "</h4>";
 
 
         ?>

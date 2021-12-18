@@ -26,32 +26,12 @@ function vote($selected, $email, $wahl_id){
                 $selected_votes = $selected_votes + intval($selected[$i+1]);
             }
 
-            if($stimmen > $selected_votes){
+            if($stimmen < $selected_votes){
                 print("<script>alert('Error: Du wolltest mehr Stimmen abgeben, als du hast!')</script>");
                 $result = 3;
             }else{
                 
-                if($selected_votes<$stimmen){
-
-                    $selected = "EXEEROR";
-                    $insert_vote = 0;
-                    $diff = ($stimmen - $selected_votes);
-
-                    for($i = 1; $i<=$diff; $i++){
-                        $stmt = $mysql->prepare("INSERT INTO voting_results (WAHL_ID, ITEM, VOTES) VALUES (:wahl_id, :selected, :stimmen)"); 
-                        $stmt->bindParam(":selected", $selected);
-                        $stmt->bindParam(":wahl_id", $wahl_id);
-                        $stmt->bindParam(":stimmen", $insert_vote);
-                        $stmt->execute();
-                    }
-
-                    $stmt = $mysql->prepare("INSERT INTO users_voted (VON, WAHL_ID) VALUES (:email, :wahl_id)");
-                    $stmt->bindParam(":email", $email);
-                    $stmt->bindParam(":wahl_id", $wahl_id);
-                    $stmt->execute();
-                    $result = 0;
-
-                }else{
+                if($selected_votes<=$stimmen){
 
                     $stmt = $mysql->prepare("SELECT * FROM stimmen_weitergaben WHERE VON = :email"); 
                     $stmt->bindParam(":email", $email);
@@ -68,12 +48,30 @@ function vote($selected, $email, $wahl_id){
                         $result = 2;
                     }else{
                     //iterate through array.. 0er auslassen
-                    for($i = 0; $i<=count($selected); $i = $i + 2){
+                    
+                    for($i = 0; $i<count($selected); $i = $i + 2){
+                        
+                        if(intval($selected[$i+1]) == 0){
+                            continue;
+                        }else{
                         $stmt = $mysql->prepare("INSERT INTO voting_results (WAHL_ID, ITEM, VOTES) VALUES (:wahl_id, :selected, :stimmen)"); 
                         $stmt->bindParam(":selected", $selected[$i]);
                         $stmt->bindParam(":wahl_id", $wahl_id);
-                        $votes_to_insert = $stimmen[$i+2];
+                        $votes_to_insert = $selected[$i+1];
                         $stmt->bindParam(":stimmen", $votes_to_insert);
+                        $stmt->execute();
+                        }
+                    }
+
+                    $selected_p = "Enthaltungen";
+                    $insert_vote = 1;
+                    $diff = ($stimmen - $selected_votes);
+
+                    for($i = 1; $i<=$diff; $i++){
+                        $stmt = $mysql->prepare("INSERT INTO voting_results (WAHL_ID, ITEM, VOTES) VALUES (:wahl_id, :selected, :stimmen)"); 
+                        $stmt->bindParam(":selected", $selected_p);
+                        $stmt->bindParam(":wahl_id", $wahl_id);
+                        $stmt->bindParam(":stimmen", $insert_vote);
                         $stmt->execute();
                     }
 
@@ -83,8 +81,9 @@ function vote($selected, $email, $wahl_id){
                     $stmt->execute();
                     $result = 0;
                     }
-                }
-            
+                
+                }    
+                
             }
 
         }

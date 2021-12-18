@@ -17,6 +17,7 @@ $id = $_GET['wahlid'];
 
             $row = $stmt->fetch();
             $elements = explode(',', $row["ITEMS"]);
+            array_push($elements, "Enthaltungen");
 
             for ($i = 0; $i < count($elements); $i++) {
                 $votes = 0;
