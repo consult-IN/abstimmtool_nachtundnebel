@@ -1,7 +1,7 @@
 <?php
 session_start();
 require("php/sec/mysql.php");
-$stmt = $mysql->prepare("SELECT * FROM wahlen WHERE ACTIVE = 1"); //verified überprüfen
+$stmt = $mysql->prepare("SELECT * FROM weitergaben_active WHERE ACTIVE = 0");
 $stmt->execute();
 $count = $stmt->rowCount();
 if ($count == 1) {

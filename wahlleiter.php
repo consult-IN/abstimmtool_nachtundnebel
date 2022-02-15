@@ -28,9 +28,11 @@ if (!isset($_SESSION["email"]) && $_SESSION["level"] >= 1) {
         <div id="top-image"><img class="img-fluid mx-auto d-block" src="res/Logo consult.IN_Transparent.png" style="max-width: 40%; margin-top: 5px;"></div>
         <div id="button-handler" style="text-align: center; margin-top: 25px; margin-bottom: 10px;">
 
-            <a href="wahl_add.php" class="btn btn-secondary btn-lg" tabindex="-1" role="button" aria-disabled="true">Wahl hinzufügen</a>
-            <a href="wahl_view_res_selected.php" class="btn btn-secondary btn-lg" tabindex="-1" role="button" aria-disabled="true">Wahlergebnisse ansehen</a>
-            <a href="wahl_partic_selected.php" class="btn btn-secondary btn-lg" tabindex="-1" role="button" aria-disabled="true">Wahlteilnehmer ansehen</a>
+            <a href="wahl_add.php" class="btn btn-secondary btn-lg men_opt" tabindex="-1" role="button" aria-disabled="true">Wahl hinzufügen</a>
+            <a href="wahl_view_res_selected.php" class="btn btn-secondary btn-lg men_opt" tabindex="-1" role="button" aria-disabled="true">Wahlergebnisse ansehen</a>
+            <a href="wahl_partic_selected.php" class="btn btn-secondary btn-lg men_opt" tabindex="-1" role="button" aria-disabled="true">Wahlteilnehmer ansehen</a>
+            <a href="wahl_active_members.php" class="btn btn-secondary btn-lg men_opt" tabindex="-1" role="button" aria-disabled="true">SB Mitglieder eingabe</a>
+            <a href="activate_weitergabe.php" class="btn btn-secondary btn-lg men_opt" tabindex="-1" role="button" aria-disabled="true">Stimmenweitergabe (aktiv./deaktiv.)</a>
 
         </div>
 

@@ -26,9 +26,19 @@ if (!isset($_SESSION["email"])) {
 require("php/sec/mysql.php");
 require("php/vote.php");
 
-    if (isset($_POST["vote"])){
+if (isset($_POST["vote"])) {
 
-        $stmt = $mysql->prepare("SELECT * FROM wahlen WHERE ACTIVE = :active_nr"); 
+    $stmt = $mysql->prepare("SELECT * FROM wahlen WHERE ACTIVE = :active_nr");
+    $active_nr = 1;
+    $stmt->bindParam(":active_nr", $active_nr);
+    $stmt->execute();
+    $count = $stmt->rowCount();
+    if ($count == 1) {
+
+        $row = $stmt->fetch();
+        $wahlid = $row["WAHL_ID"];
+
+        $stmt = $mysql->prepare("SELECT * FROM wahlen WHERE ACTIVE = :active_nr");
         $active_nr = 1;
         $stmt->bindParam(":active_nr", $active_nr);
         $stmt->execute();
@@ -36,44 +46,32 @@ require("php/vote.php");
         if ($count == 1) {
 
             $row = $stmt->fetch();
-            $wahlid = $row["WAHL_ID"];
+            $elements = explode(',', $row["ITEMS"]);
+            $elem_amount = count($elements);
 
-            $stmt = $mysql->prepare("SELECT * FROM wahlen WHERE ACTIVE = :active_nr"); 
-            $active_nr = 1;
-            $stmt->bindParam(":active_nr", $active_nr);
-            $stmt->execute();
-            $count = $stmt->rowCount();
-            if ($count == 1) {
+            $selected = array();
 
-                $row = $stmt->fetch();
-                $elements = explode(',', $row["ITEMS"]);
-                $elem_amount = count($elements);
+            $n = 0;
 
-                $selected = array();
+            for ($k = 0; $k < $elem_amount * 2; $k = $k + 2) {
 
-                $n = 0;
-
-                for($k = 0; $k < $elem_amount*2; $k = $k + 2){
-                    
-                    $selected[$k] = $elements[$n];
-                    if($_POST[$n] != NULL){
-                        $selected[($k+1)] = $_POST[$n];
-                    }else{
-                        $selected[($k+1)] = 0;
-                    }
-                    $n++;
-
+                $selected[$k] = $elements[$n];
+                if ($_POST[$n] != NULL) {
+                    $selected[($k + 1)] = $_POST[$n];
+                } else {
+                    $selected[($k + 1)] = 0;
                 }
-                
-                $result = vote($selected, $_SESSION["email"], $wahlid);
+                $n++;
+            }
 
-                if($result == 0){
-                    echo "<script>alert('Stimme erfolgreich abgegeben!')</script>";
-                }
+            $result = vote($selected, $_SESSION["email"], $wahlid);
+
+            if ($result == 0) {
+                echo "<script>alert('Stimme erfolgreich abgegeben!')</script>";
             }
         }
-
     }
+}
 
 ?>
 
@@ -84,34 +82,45 @@ require("php/vote.php");
         <div id="top-image"><img class="img-fluid mx-auto d-block" src="res/Logo consult.IN_Transparent.png" style="max-width: 40%; margin-top: 5px;"></div>
         <div id="button-handler" style="text-align: center; margin-top: 25px; margin-bottom: 10px;">
 
-        <a href="stimme_weitergeben.php" class="btn btn-secondary btn-lg" tabindex="-1" role="button" aria-disabled="true">Stimme weitergeben</a>
-        <?php
+            <a href="stimme_weitergeben.php" class="btn btn-secondary btn-lg" tabindex="-1" role="button" aria-disabled="true">Stimme weitergeben</a>
+            <?php
 
-        require("php/sec/mysql.php");
+            require("php/sec/mysql.php");
 
-        if($_SESSION["level"] >= 1){
-        echo '<a href="wahlleiter.php" class="btn btn-secondary btn-lg" tabindex="-1" role="button" aria-disabled="true">Wahlleiter</a>';
-        }
+            if ($_SESSION["level"] >= 1) {
+                echo '<a href="wahlleiter.php" class="btn btn-secondary btn-lg" tabindex="-1" role="button" aria-disabled="true">Wahlleiter</a>';
+            }
 
-        $stmt = $mysql->prepare("SELECT * FROM stimmen_weitergaben WHERE ZU = :email"); 
-        $stmt->bindParam(":email", $_SESSION["email"]);
-        $stmt->execute();
-        $count = $stmt->rowCount();
-        echo '<p>Du hast ' . $count . ' zusätzliche Stimmen</p>';
+            $stmt = $mysql->prepare("SELECT * FROM stimmen_weitergaben WHERE ZU = :email");
+            $stmt->bindParam(":email", $_SESSION["email"]);
+            $stmt->execute();
+            $count = $stmt->rowCount();
+            echo '<p>Du hast ' . $count . ' zusätzliche Stimmen</p>';
 
-        $stimmen = $count;
+            $db_erg_entry = mysqli_query($db_link, 'SELECT * FROM active_member');
 
-        $stmt = $mysql->prepare("SELECT * FROM wahlen WHERE ACTIVE = :active_nr"); 
-        $active_nr = 1;
-        $stmt->bindParam(":active_nr", $active_nr);
-        $stmt->execute();
-        $count = $stmt->rowCount();
-        if ($count == 1) {
+            if (!$db_erg_entry) {
+                die('Ungültige Abfrage: ' . mysqli_error());
+            }
 
-            $row = $stmt->fetch();
-            $elements = explode(',', $row["ITEMS"]);
+            while ($zeile = mysqli_fetch_array($db_erg_entry, MYSQLI_ASSOC)) {
 
-            echo ' 
+                echo '<p><u>Maximale Anzahl an Stimmen pro Person: ' . ($zeile["active_mem"] * 0.05) . '</u></p>';
+            }
+
+            $stimmen = $count;
+
+            $stmt = $mysql->prepare("SELECT * FROM wahlen WHERE ACTIVE = :active_nr");
+            $active_nr = 1;
+            $stmt->bindParam(":active_nr", $active_nr);
+            $stmt->execute();
+            $count = $stmt->rowCount();
+            if ($count == 1) {
+
+                $row = $stmt->fetch();
+                $elements = explode(',', $row["ITEMS"]);
+
+                echo ' 
             
             <div class="card mx-auto" style="width: 18rem;">
             <div class="card-body">
@@ -120,8 +129,8 @@ require("php/vote.php");
             <div class="form-group">';
 
                 for ($i = 0; $i < count($elements); $i++) {
-                echo '
-                <label for="basic-url" class="form-label">Auswahl ' . ($i+1) . ':</label>
+                    echo '
+                <label for="basic-url" class="form-label">Auswahl ' . ($i + 1) . ':</label>
                 <div class="input-group mb-3">
                     <div class="hstack gap-3 mx-auto">
                     <div class="bg-light border mx-auto"><span class="input-group-text" id="basic-addon3">' . $elements[$i] . '</span></div>
@@ -130,7 +139,7 @@ require("php/vote.php");
                 </div>';
                 };
 
-            echo '
+                echo '
             </div>
 
             <button type="submit" name="vote" class="btn btn-primary">Abstimmen</button>
@@ -139,14 +148,13 @@ require("php/vote.php");
             </div>
             
             ';
-
-        } else{
-            echo '<p>Keine aktive Wahl. Möglicherweise musst du diese Seite aktualisieren.</p>';
-        }   
-
+            } else {
+                echo '<p>Keine aktive Wahl. Möglicherweise musst du diese Seite aktualisieren.</p>';
+            }
 
 
-        ?>
+
+            ?>
 
         </div>
 
